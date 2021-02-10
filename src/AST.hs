@@ -8,9 +8,9 @@ data Comm = Assign String Atom
           | CreateMap FilePath
             deriving (Show, Eq)
 
-data Cell = CEmtpy
-          | CTreasure
-          | CEnemy
+data Cell = CEmpty
+          | CTreasure Atom String
+          | CEnemy Atom String
           | CExit
             deriving (Show, Eq)
 
@@ -27,6 +27,7 @@ data Token =  TAss
             | TOpen
             | TClose
             | TComma
+            | TQuote
             | TPlayer
             | TCell
             | TMap
@@ -34,6 +35,7 @@ data Token =  TAss
             | TDmg
             | TInt Int
             | TVar String
+            | TLore String
             | TEmpty
             | TTreasure
             | TEnemy

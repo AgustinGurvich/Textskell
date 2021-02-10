@@ -1,6 +1,6 @@
 module Main where
 
-import TextskellParse 
+import Parser 
 import Lib
 import AST
 

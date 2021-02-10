@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: aac93b42dee1e655f48599288b56ed1391d384894ed6c527f38852efcf3bf7ef
+-- hash: 26b374d1a1f12d27422e14361a9097f4f2a5009abd0a00a1c073c60c8b679791
 
 name:           textskell
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       AST
       Lib
+      Parser
   other-modules:
       Paths_textskell
   hs-source-dirs:

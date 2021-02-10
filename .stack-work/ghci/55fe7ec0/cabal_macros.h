@@ -33,17 +33,6 @@
   (major1) == 4 && (major2) == 14 && (minor) <= 1)
 #endif /* MIN_VERSION_base */
 
-/* package textskell-0.1.0.0 */
-#ifndef VERSION_textskell
-#define VERSION_textskell "0.1.0.0"
-#endif /* VERSION_textskell */
-#ifndef MIN_VERSION_textskell
-#define MIN_VERSION_textskell(major1,major2,minor) (\
-  (major1) <  0 || \
-  (major1) == 0 && (major2) <  1 || \
-  (major1) == 0 && (major2) == 1 && (minor) <= 0)
-#endif /* MIN_VERSION_textskell */
-
 /* tool alex-3.2.4 */
 #ifndef TOOL_VERSION_alex
 #define TOOL_VERSION_alex "3.2.4"
@@ -176,9 +165,15 @@
   (major1) == 2 && (major2) == 34 && (minor) <= 0)
 #endif /* MIN_TOOL_VERSION_strip */
 
+#ifndef CURRENT_PACKAGE_KEY
+#define CURRENT_PACKAGE_KEY "textskell-0.1.0.0-JcQLUsoGpFHAvzupLd8DS8"
+#endif /* CURRENT_PACKAGE_KEY */
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "textskell-0.1.0.0-47VsG97mdkBe5iz3SVeFR-textskell-exe"
+#define CURRENT_COMPONENT_ID "textskell-0.1.0.0-JcQLUsoGpFHAvzupLd8DS8"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
 #endif /* CURRENT_PACKAGE_VERSION */
+
+#undef CURRENT_PACKAGE_KEY
+#undef CURRENT_COMPONENT_ID
