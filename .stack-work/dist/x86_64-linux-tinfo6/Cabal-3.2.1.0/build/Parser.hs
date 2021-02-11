@@ -385,7 +385,9 @@ lexVar cs = case span isAlpha cs of
           ("Treasure", rest) -> TTreasure : lexer rest
           ("Enemy", rest) -> TEnemy : lexer rest
           ("Exit", rest) -> TExit : lexer rest
-          (s,rest) -> TVar s : lexer rest
+          (s,rest) -> TVar s : lexer rest 
+
+-- TO DO: Parsear la extension del archivo
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 

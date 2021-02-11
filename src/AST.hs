@@ -30,7 +30,7 @@ data Token =  TAss
             | TQuote
             | TPlayer
             | TCell
-            | TMap
+            | TMap 
             | THp
             | TDmg
             | TInt Int
@@ -40,7 +40,3 @@ data Token =  TAss
             | TTreasure
             | TEnemy
             | TExit
-
-{-
-TO DO: Agregar la opcion de Lore y parsear ""
--}

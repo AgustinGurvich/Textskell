@@ -97,4 +97,7 @@ lexVar cs = case span isAlpha cs of
           ("Enemy", rest) -> TEnemy : lexer rest
           ("Exit", rest) -> TExit : lexer rest
           (s,rest) -> TVar s : lexer rest 
+
+-- TO DO: Parsear la extension del archivo 
+
 }

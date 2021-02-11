@@ -1,7 +1,7 @@
 /home/agustin/Documents/Textskell/package.yaml:
   hash: 7da1c2f91e10b600a130276103f44052abd2f08462106940ec8b09d51467ae24
 /home/agustin/Documents/Textskell/src/Parser.y:
-  hash: 8a0ca904181637775ab61503a134f49eb1297d6a54da0e20587eba7a349e02f7
+  hash: b5df977f13ef7f2a93f63e4913c8d0d9dd776788fac76343bb3f263074bb8b68
 /home/agustin/Documents/Textskell/src/Lib.hs:
   hash: 11d6d255cb397fa45980eb516ea685146565d9de2108c4eea356ea41db8364be
 /home/agustin/Documents/Textskell/textskell.cabal:
@@ -13,4 +13,4 @@
 /home/agustin/Documents/Textskell/ChangeLog.md:
   hash: 48d4197bd2fcb9f38e5432fbe7ace4405af04dac1a831af36e97f06bfa509b44
 /home/agustin/Documents/Textskell/src/AST.hs:
-  hash: 99dd200b898c2d861adc24b54f2a807506b842574d005c712adf32a3943d2e1b
+  hash: f3f0749e749cff40d47440e7733f59eeb4832e1a4e2d4b3bba1b8ef1787f5bd9

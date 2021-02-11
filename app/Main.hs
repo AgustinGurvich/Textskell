@@ -7,7 +7,3 @@ import AST
 
 main :: IO ()
 main = someFunc
-
-{-
-TO DO: Solucionar el problema de import
--}
