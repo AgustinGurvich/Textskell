@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 26b374d1a1f12d27422e14361a9097f4f2a5009abd0a00a1c073c60c8b679791
+-- hash: d9834368a20044f981fc24a46a2aac1c743d546b91b54af19150625d22164a52
 
 name:           textskell
 version:        0.1.0.0
@@ -28,7 +28,9 @@ source-repository head
 library
   exposed-modules:
       AST
+      GameBuilder
       Lib
+      Monads
       Parser
   other-modules:
       Paths_textskell
@@ -37,6 +39,7 @@ library
   build-depends:
       array
     , base >=4.7 && <5
+    , containers
   default-language: Haskell2010
 
 executable textskell-exe
@@ -49,6 +52,7 @@ executable textskell-exe
   build-depends:
       array
     , base >=4.7 && <5
+    , containers
     , textskell
   default-language: Haskell2010
 
@@ -63,5 +67,6 @@ test-suite textskell-test
   build-depends:
       array
     , base >=4.7 && <5
+    , containers
     , textskell
   default-language: Haskell2010

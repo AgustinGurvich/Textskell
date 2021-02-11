@@ -1,16 +1,20 @@
 /home/agustin/Documents/Textskell/package.yaml:
-  hash: 7da1c2f91e10b600a130276103f44052abd2f08462106940ec8b09d51467ae24
+  hash: 1db7d6b834eebfc13df6ad161f96bebdce05b090812defb67ed2074da84f9024
 /home/agustin/Documents/Textskell/src/Parser.y:
   hash: b5df977f13ef7f2a93f63e4913c8d0d9dd776788fac76343bb3f263074bb8b68
+/home/agustin/Documents/Textskell/src/GameBuilder.hs:
+  hash: 8f6b0ae77347eeceb920a95cef002c0e876f35a946feaf95905c12fac35e31d5
 /home/agustin/Documents/Textskell/src/Lib.hs:
   hash: 11d6d255cb397fa45980eb516ea685146565d9de2108c4eea356ea41db8364be
 /home/agustin/Documents/Textskell/textskell.cabal:
-  hash: 95622d8d08ea35a8fab2d588ea631d8fe3958d4844970effaea0fbf3ae0f0c76
+  hash: 765abaed129ce83c57233f5d71bd74f179ef83778adc1e59e8740b2e6e7969d8
 /home/agustin/Documents/Textskell/.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.2.1.0/build/autogen/Paths_textskell.hs:
-  hash: b071d10696d2db96be49947b505ad217e5887b86a1e7d54f292ab85a0cff9e95
+  hash: 7917801f3c50a3def6c5a58d6740e860c95dcf86728b88075fd98a3bdeced9ed
 /home/agustin/Documents/Textskell/README.md:
   hash: 5f6265e7662a7fccc444e1d9b7338806bdd3803d1c9eca1b6d534742fe7148af
 /home/agustin/Documents/Textskell/ChangeLog.md:
   hash: 48d4197bd2fcb9f38e5432fbe7ace4405af04dac1a831af36e97f06bfa509b44
+/home/agustin/Documents/Textskell/src/Monads.hs:
+  hash: d44dcd2221daeb2966b26418d66bc13a5107bd84b88bfd740cda12d7115fb81e
 /home/agustin/Documents/Textskell/src/AST.hs:
   hash: f3f0749e749cff40d47440e7733f59eeb4832e1a4e2d4b3bba1b8ef1787f5bd9
