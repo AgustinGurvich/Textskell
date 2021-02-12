@@ -1,3 +1,4 @@
+mapSize (3,3)
 espada <- ("Espada del rey arruinado", Dmg, 2)
 estus <- ("Frasco de Estus", Hp, 5)
 arco <- ("Arcoescudo inmortal", Dmg, 5)

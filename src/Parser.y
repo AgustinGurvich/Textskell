@@ -17,7 +17,6 @@ import Data.Char
   '"'         {TQuote}
   setPlayer   {TPlayer}
   setCell     {TCell}
-  setMap      {TMap}
   Dmg         {TDmg}
   HP          {THp}
   Int         {TInt $$}
@@ -27,6 +26,7 @@ import Data.Char
   Treasure    {TTreasure}
   Enemy       {TEnemy}
   Exit        {TExit} 
+  mapSize     {TMapSize}
 
 
 
@@ -34,7 +34,8 @@ import Data.Char
 
 %%
 
-
+start :: {[Comm]}
+start : mapSize '(' Int ',' Int ')' Comms          {SetMapSize $3 $5 : $7}
 
 Comms :: {[Comm]}
 Comms : Comm                                       {[$1]}
@@ -44,14 +45,13 @@ Comm :: {Comm}
 Comm : Var '<-' Atom                             {Assign $1 $3}
      | setPlayer Player                          {CreatePlayer $2}
      | setCell '(' Int ',' Int ')' Cell          {CreateCell $3 $5 $7}
-     | setMap Var                                {CreateMap $2}
 
 Cell :: {Cell}
 Cell : Empty                                     {CEmpty} 
      | Treasure '(' Atom ',' '"' Lore '"' ')'    {CTreasure $3 $6}
      | Enemy '(' Atom ',' '"' Lore '"' ')'       {CEnemy $3 $6}     
      | Exit                                      {CExit}
-
+      
 Atom :: {Atom}
 Atom : '(' Int ',' Int ')'                         {Npc $2 $4} 
      | '(' '"' Lore '"' ',' Buff ',' Int ')'       {Item $3 $6 $8}
@@ -89,13 +89,13 @@ lexNum cs = TInt (read num) : lexer rest where
 lexVar cs = case span isAlpha cs of 
           ("setPlayer",rest) -> TPlayer : lexer rest
           ("setCell", rest) -> TCell : lexer rest
-          ("setMap", rest) -> TMap : lexer rest
           ("Hp", rest) -> THp : lexer rest
           ("Dmg", rest) -> TDmg : lexer rest
           ("Empty", rest) -> TEmpty : lexer rest
           ("Treasure", rest) -> TTreasure : lexer rest
           ("Enemy", rest) -> TEnemy : lexer rest
           ("Exit", rest) -> TExit : lexer rest
+          ("mapSize",rest) -> TMapSize : lexer rest
           (s,rest) -> TVar s : lexer rest 
 
 -- TO DO: Parsear la extension del archivo 

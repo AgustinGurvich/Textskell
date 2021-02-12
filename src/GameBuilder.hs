@@ -65,10 +65,13 @@ evalComm (Assign s v) = case v of
                           Var x -> do var <- lookforVar x 
                                       updateVar s var
                           n -> do updateVar s n
-evalComm (CreatePlayer p@(Player hp dmg x y)) = if x < 0 || y < 0 then throw InvalidPos else if hp < 1 then throw InvalidValue else updatePlayer p 
+evalComm (CreatePlayer p@(Player hp dmg x y)) = do  bound <- lookforCell (-1,-1)
+                                                    case bound of
+                                                      (CMapSize xbound ybound) -> if x < 0 || y < 0 || x >= xbound || y >= ybound then throw InvalidPos else if hp < 1 then throw InvalidValue else updatePlayer p 
+                                                      _ -> throw InvalidPos
 evalComm (CreateCell x y (CTreasure (Var v) s)) = do var <- lookforVar v
                                                      updateCell (x,y) (CTreasure var s)
 evalComm (CreateCell x y (CEnemy (Var v) s)) = do var <- lookforVar v
                                                   updateCell (x,y) (CEnemy var s)
 evalComm (CreateCell x y c) = do updateCell (x,y) c
-evalComm (CreateMap m) = undefined
+evalComm (SetMapSize x y) = do updateCell (-1,-1) (CMapSize x y)

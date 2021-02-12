@@ -3,13 +3,14 @@ module AST where
 data Comm = Assign String Atom
           | CreatePlayer Player
           | CreateCell Int Int Cell
-          | CreateMap FilePath
+          | SetMapSize Int Int
             deriving (Show, Eq)
 
 data Cell = CEmpty
           | CTreasure Atom String
           | CEnemy Atom String
           | CExit
+          | CMapSize Int Int
             deriving (Show, Eq)
 
 data Atom = Npc Int Int 
@@ -28,7 +29,6 @@ data Token =  TAss
             | TQuote
             | TPlayer
             | TCell
-            | TMap 
             | THp
             | TDmg
             | TInt Int
@@ -38,5 +38,6 @@ data Token =  TAss
             | TTreasure
             | TEnemy
             | TExit
+            | TMapSize
 
 data Error = UndefVar | UndefCell | InvalidPos | TypeError | InvalidValue deriving (Eq,Show)
