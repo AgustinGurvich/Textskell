@@ -34,7 +34,7 @@ instance Applicative StateError where
 
 instance Monad StateError where
   return x = StateError (\v m p -> Right (x,v,m,p))
-  a >>= f = StateError (\v m p -> let (x,v',m',p') = runStateError a v m p in runStateError (f x) v' m' p')
+  a >>= f = StateError (\v m p -> runStateError a v m p >>= \(x,v',m',p') -> runStateError (f x) v' m' p')
 
 instance MonadError StateError where
   throw e = StateError (\v m p -> Left e)
@@ -58,13 +58,17 @@ eval c = eval' c initVarEnv initMapEnv initPlayer
 
 eval' :: [Comm] -> VarEnv -> MapEnv -> Player -> Either Error (VarEnv,MapEnv,Player)
 eval' [x] var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) -> return (v,m,p)
-eval' (x:xs) var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) eval' xs v m p  
+eval' (x:xs) var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) -> eval' xs v m p  
 
-evalComm :: MonadState m => Comm -> m () 
+evalComm :: (MonadState m, MonadError m) => Comm -> m () 
 evalComm (Assign s v) = case v of
                           Var x -> do var <- lookforVar x 
                                       updateVar s var
                           n -> do updateVar s n
-evalComm (CreatePlayer p@(Player hp dmg x y)) = if x < 0 || y < 0 then throw InvalidPos else if hp < 0 then throw InvalidValue else updatePlayer p 
+evalComm (CreatePlayer p@(Player hp dmg x y)) = if x < 0 || y < 0 then throw InvalidPos else if hp < 1 then throw InvalidValue else updatePlayer p 
+evalComm (CreateCell x y (CTreasure (Var v) s)) = do var <- lookforVar v
+                                                     updateCell (x,y) (CTreasure var s)
+evalComm (CreateCell x y (CEnemy (Var v) s)) = do var <- lookforVar v
+                                                  updateCell (x,y) (CEnemy var s)
 evalComm (CreateCell x y c) = do updateCell (x,y) c
 evalComm (CreateMap m) = undefined
