@@ -8,3 +8,5 @@ class Monad m => MonadState m where
 
     lookforCell :: (Int,Int) -> m Cell 
     updateCell :: (Int,Int) -> Cell -> m ()
+
+    updatePlayer :: Player -> m ()

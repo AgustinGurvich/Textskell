@@ -1,7 +1,5 @@
 module AST where
 
-newtype C = Command Comm
-
 data Comm = Assign String Atom
           | CreatePlayer Player
           | CreateCell Int Int Cell
