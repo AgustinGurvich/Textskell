@@ -3,7 +3,7 @@
 /home/agustin/Documents/Textskell/src/Parser.y:
   hash: b5df977f13ef7f2a93f63e4913c8d0d9dd776788fac76343bb3f263074bb8b68
 /home/agustin/Documents/Textskell/src/GameBuilder.hs:
-  hash: 0bb3baf53f40cfa1a98c69d856ae840f2fa9e8c8b8f8083f66b0b34a14454428
+  hash: dc6417f314d75e48b8e20323e8aedca6be40fdd1b7905ce83ae4a3771ea90706
 /home/agustin/Documents/Textskell/src/Lib.hs:
   hash: 11d6d255cb397fa45980eb516ea685146565d9de2108c4eea356ea41db8364be
 /home/agustin/Documents/Textskell/textskell.cabal:
@@ -15,6 +15,6 @@
 /home/agustin/Documents/Textskell/ChangeLog.md:
   hash: 48d4197bd2fcb9f38e5432fbe7ace4405af04dac1a831af36e97f06bfa509b44
 /home/agustin/Documents/Textskell/src/Monads.hs:
-  hash: 64946faecfb5116596fe0229988ced4d4f49720bf49ee1e14b8a226b4f48bae1
+  hash: 47fe4f173cf3bfaa1c1aef7e3399d38a82b5f3170683097a154ee8e5bb6aba86
 /home/agustin/Documents/Textskell/src/AST.hs:
-  hash: e63f6441b8e8f5eed5ad5772d7479effccdb1b44e078d2957a5685a4642f583e
+  hash: 13bd96df7336a465a429bbddbe93f71de67e87550e480b90e577192579eb1a83

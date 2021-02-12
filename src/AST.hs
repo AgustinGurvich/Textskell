@@ -38,3 +38,5 @@ data Token =  TAss
             | TTreasure
             | TEnemy
             | TExit
+
+data Error = UndefVar | UndefCell | InvalidPos | TypeError | InvalidValue deriving (Eq,Show)

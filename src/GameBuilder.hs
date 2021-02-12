@@ -22,42 +22,49 @@ initMapEnv = M.empty
 initPlayer :: Player
 initPlayer = Player (-1) (-1) (-1) (-1)
 
--- Monada de estado
-newtype State a = State {runState :: VarEnv -> MapEnv ->  Player ->(a, VarEnv, MapEnv,Player) }
+-- Monada de estado con manejo de errores
+newtype StateError a = StateError {runStateError :: VarEnv -> MapEnv ->  Player -> Either Error (a, VarEnv, MapEnv,Player)}
 
-instance Monad State where
-  return x = State (\v m p -> (x,v,m,p))
-  a >>= f = State (\v m p -> let (x,v',m',p) = runState a v m p in runState (f x) v' m' p) 
-
-instance Functor State where
+instance Functor StateError where
   fmap = liftM
 
-instance Applicative State where
+instance Applicative StateError where
   pure = return 
   (<*>) = ap
 
-instance MonadState State where
-  lookforVar s = State (\v m p -> (lookfor' s v,v,m,p)) where lookfor' s v = fromJust $ M.lookup s v 
-  lookforCell s = State (\v m p -> (lookfor' s m,v,m,p)) where lookfor' s m = fromJust $ M.lookup s m
+instance Monad StateError where
+  return x = StateError (\v m p -> Right (x,v,m,p))
+  a >>= f = StateError (\v m p -> let (x,v',m',p') = runStateError a v m p in runStateError (f x) v' m' p')
 
-  updateVar s a = State (\v m p -> ((),update' s a v, m,p)) where update' = M.insert
-  updateCell s a = State (\v m p -> ((),v, update' s a m,p)) where update' = M.insert  
-  updatePlayer s = State (\v m p -> ((),v,m,s)) 
- 
--- Evaluador
+instance MonadError StateError where
+  throw e = StateError (\v m p -> Left e)
 
-eval :: [Comm] -> (VarEnv,MapEnv,Player)
+instance MonadState StateError where
+  lookforVar s = StateError (\v m p -> case M.lookup s v of
+                                        Nothing -> Left UndefVar
+                                        Just x -> Right(x,v,m,p))
+  lookforCell s = StateError (\v m p -> case M.lookup s m of
+                                        Nothing -> Left UndefCell
+                                        Just x -> Right(x,v,m,p))
+  
+  updateVar s a = StateError (\v m p -> Right ((),update' s a v, m,p)) where update' = M.insert
+  updateCell s a = StateError (\v m p -> Right ((),v, update' s a m,p)) where update' = M.insert
+  updatePlayer s = StateError (\v m p -> Right ((),v,m,s)) 
+
+--Evaluador
+
+eval :: [Comm] -> Either Error (VarEnv,MapEnv,Player)
 eval c = eval' c initVarEnv initMapEnv initPlayer
 
-eval' :: [Comm] -> VarEnv -> MapEnv -> Player -> (VarEnv,MapEnv,Player)
-eval' [x] var map player = (v,m,p) where (_,v,m,p) = runState (evalComm x) var map player
-eval' (x:xs) var map player = let (_,v,m,p) = runState (evalComm x) var map player in eval' xs v m p  
+eval' :: [Comm] -> VarEnv -> MapEnv -> Player -> Either Error (VarEnv,MapEnv,Player)
+eval' [x] var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) -> return (v,m,p)
+eval' (x:xs) var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) eval' xs v m p  
 
 evalComm :: MonadState m => Comm -> m () 
 evalComm (Assign s v) = case v of
                           Var x -> do var <- lookforVar x 
                                       updateVar s var
                           n -> do updateVar s n
-evalComm (CreatePlayer p) = updatePlayer p
+evalComm (CreatePlayer p@(Player hp dmg x y)) = if x < 0 || y < 0 then throw InvalidPos else if hp < 0 then throw InvalidValue else updatePlayer p 
 evalComm (CreateCell x y c) = do updateCell (x,y) c
 evalComm (CreateMap m) = undefined
