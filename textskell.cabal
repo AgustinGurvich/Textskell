@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d9834368a20044f981fc24a46a2aac1c743d546b91b54af19150625d22164a52
+-- hash: 38d672f09f7f55216791e0334f63e9b1ea133bc9eb6172bb1ac915dbd0f2fd78
 
 name:           textskell
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       AST
       GameBuilder
       Lib
+      MapUtil
       Monads
       Parser
   other-modules:

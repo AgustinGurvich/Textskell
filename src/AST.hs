@@ -11,6 +11,7 @@ data Cell = CEmpty
           | CEnemy Atom String
           | CExit
           | CMapSize Int Int
+          | CNewLine
             deriving (Show, Eq)
 
 data Atom = Npc Int Int 

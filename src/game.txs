@@ -10,7 +10,7 @@ setCell (0,1) Enemy (dalek, "EXTERMINATE")
 setCell (0,2) Empty
 setPlayer (2, 10, (0,0))
 setCell (1,0) Treasure (estus, "Encuentras un frasco que contiene una sustacia amarilla brillante. ¿Lo tomas?")
-setCell (1,1) Treasure (manzana, "Una manzana de aspecto dudoso se posa ante ti. ¿La tomas?")
+setCell (1,1) Empty
 setCell (1,2) Treasure (espada, "Duh")
 setCell (2,0) Treasure (arco, "Me cansé")
 setCell (2,1) Treasure (estus, "Encuentras un frasco que contiene una sustacia amarilla brillante. ¿Lo tomas?")
