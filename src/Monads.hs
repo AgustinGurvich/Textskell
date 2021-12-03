@@ -10,6 +10,7 @@ class Monad m => MonadState m where
     updateCell :: (Int,Int) -> Cell -> m ()
 
     updatePlayer :: Player -> m ()
+    getMapSize :: m Cell
 
 class Monad m => MonadError m where
     throw :: Error -> m a 

@@ -24,6 +24,9 @@ dependencies:
 - base >= 4.7 && < 5
 - array
 - containers
+- ansi-terminal 
+- colour
+- mintty
 
 library:
   source-dirs: src

@@ -8,7 +8,6 @@ import Control.Monad
 import Monads
 
 -- Entornos de almacenamiento
-
 type VarEnv = M.Map String Atom
 type MapEnv = M.Map (Int,Int) Cell
 
@@ -46,7 +45,7 @@ instance MonadState StateError where
   lookforCell s = StateError (\v m p -> case M.lookup s m of
                                         Nothing -> Left UndefCell
                                         Just x -> Right(x,v,m,p))
-  
+  getMapSize = StateError (\v m p -> Right (fromJust $ M.lookup (-1,-1) m,v,m,p ) )
   updateVar s a = StateError (\v m p -> Right ((),update' s a v, m,p)) where update' = M.insert
   updateCell s a = StateError (\v m p -> Right ((),v, update' s a m,p)) where update' = M.insert
   updatePlayer s = StateError (\v m p -> Right ((),v,m,s)) 
@@ -57,21 +56,30 @@ eval :: [Comm] -> Either Error (VarEnv,MapEnv,Player)
 eval c = eval' c initVarEnv initMapEnv initPlayer
 
 eval' :: [Comm] -> VarEnv -> MapEnv -> Player -> Either Error (VarEnv,MapEnv,Player)
+eval' [] _ _ _  = Left InvalidValue 
 eval' [x] var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) -> return (v,m,p)
 eval' (x:xs) var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) -> eval' xs v m p  
 
+outOfBounds :: (Int,Int) -> (Int,Int) -> Bool 
+outOfBounds (x,y) (xbound,ybound) = x < 0 || y < 0 || x >= xbound || y >= ybound
+
 evalComm :: (MonadState m, MonadError m) => Comm -> m () 
 evalComm (Assign s v) = case v of
-                          Var x -> do var <- lookforVar x 
+                          Var x -> do var <- lookforVar x --Si la variable esta definida, la defino con otro nombre. Sino, se propaga solo el error
                                       updateVar s var
-                          n -> do updateVar s n
-evalComm (CreatePlayer p@(Player hp dmg x y)) = do  bound <- lookforCell (-1,-1)
-                                                    case bound of
-                                                      (CMapSize xbound ybound) -> if x < 0 || y < 0 || x >= xbound || y >= ybound then throw InvalidPos else if hp < 1 then throw InvalidValue else updatePlayer p 
-                                                      _ -> throw InvalidPos
+                          n -> do updateVar s n -- Creo la variable
+evalComm (CreatePlayer p@(Player hp dmg x y)) = do mapa <- getMapSize --Busco los limites del mapa
+                                                   let (CMapSize xbound ybound) = mapa
+                                                   if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else if hp < 1 || dmg < 0 then throw InvalidValue else updatePlayer p 
 evalComm (CreateCell x y (CTreasure (Var v) s)) = do var <- lookforVar v
-                                                     updateCell (x,y) (CTreasure var s)
+                                                     mapa <- getMapSize 
+                                                     let (CMapSize xbound ybound) = mapa
+                                                     if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else updateCell (x,y) (CTreasure var s)
 evalComm (CreateCell x y (CEnemy (Var v) s)) = do var <- lookforVar v
-                                                  updateCell (x,y) (CEnemy var s)
-evalComm (CreateCell x y c) = do updateCell (x,y) c
-evalComm (SetMapSize x y) = do updateCell (-1,-1) (CMapSize x y)
+                                                  mapa <- getMapSize
+                                                  let (CMapSize xbound ybound) = mapa
+                                                  if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else updateCell (x,y) (CEnemy var s)
+evalComm (CreateCell x y c) = do mapa <- getMapSize 
+                                 let (CMapSize xbound ybound) = mapa
+                                 if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else updateCell (x,y) c -- Para las celdas vacias
+evalComm (SetMapSize x y) = do updateCell (-1,-1) (CMapSize x y) -- Creo el tamaño del mapa

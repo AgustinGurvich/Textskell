@@ -1,17 +1,22 @@
-mapSize (3,3)
+mapSize (4,3)
 espada <- ("Espada del rey arruinado", Dmg, 2)
 estus <- ("Frasco de Estus", Hp, 5)
 arco <- ("Arcoescudo inmortal", Dmg, 5)
 manzana <- ("Manzana de aspecto dudoso", Hp, -3)
-dalek <- (10,5)
+posicion <- (10,5)
+arcoCopia <- arco
+arcoCopiaC <- arcoCopia
 
 setCell (0,0) Empty
-setCell (0,1) Enemy (dalek, "EXTERMINATE")
+setCell (0,1) Empty
 setCell (0,2) Empty
-setPlayer (2, 10, (0,0))
-setCell (1,0) Treasure (estus, "Encuentras un frasco que contiene una sustacia amarilla brillante. ¿Lo tomas?")
+setPlayer (2, 0, (0,0))
+setCell (1,0) Empty
 setCell (1,1) Empty
-setCell (1,2) Treasure (espada, "Duh")
-setCell (2,0) Treasure (arco, "Me cansé")
+setCell (1,2) Enemy (posicion, "EXTERMINATE")
+setCell (2,0) Treasure (arcoCopiaC, "Me cansé")
 setCell (2,1) Treasure (estus, "Encuentras un frasco que contiene una sustacia amarilla brillante. ¿Lo tomas?")
 setCell (2,2) Exit
+setCell (3,0) Empty
+setCell (3,1) Empty
+setCell (3,2) Empty

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 38d672f09f7f55216791e0334f63e9b1ea133bc9eb6172bb1ac915dbd0f2fd78
+-- hash: baf091134117b01a0cd05384f93b785308b7219357d97d00240dbb35e159e37f
 
 name:           textskell
 version:        0.1.0.0
@@ -33,14 +33,19 @@ library
       MapUtil
       Monads
       Parser
+      MonadFunctions
   other-modules:
       Paths_textskell
   hs-source-dirs:
       src
   build-depends:
-      array
+      ansi-terminal
+    , array
     , base >=4.7 && <5
+    , colour
     , containers
+    , mintty
+    , mtl
   default-language: Haskell2010
 
 executable textskell-exe
@@ -51,10 +56,14 @@ executable textskell-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
+      ansi-terminal
+    , array
     , base >=4.7 && <5
+    , colour
     , containers
+    , mintty
     , textskell
+    , mtl
   default-language: Haskell2010
 
 test-suite textskell-test
@@ -66,8 +75,11 @@ test-suite textskell-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      array
+      ansi-terminal
+    , array
     , base >=4.7 && <5
+    , colour
     , containers
+    , mintty
     , textskell
   default-language: Haskell2010
