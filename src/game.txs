@@ -1,4 +1,4 @@
-mapSize (4,3)
+mapSize (10,10)
 espada <- ("Espada del rey arruinado", Dmg, 2)
 estus <- ("Frasco de Estus", Hp, 5)
 arco <- ("Arcoescudo inmortal", Dmg, 5)
@@ -7,16 +7,12 @@ posicion <- (10,5)
 arcoCopia <- arco
 arcoCopiaC <- arcoCopia
 
-setCell (0,0) Empty
-setCell (0,1) Empty
-setCell (0,2) Empty
-setPlayer (2, 0, (0,0))
-setCell (1,0) Empty
-setCell (1,1) Empty
+setPlayer (15, 3, (0,0))
 setCell (1,2) Enemy (posicion, "EXTERMINATE")
-setCell (2,0) Treasure (arcoCopiaC, "Me cansé")
-setCell (2,1) Treasure (estus, "Encuentras un frasco que contiene una sustacia amarilla brillante. ¿Lo tomas?")
-setCell (2,2) Exit
-setCell (3,0) Empty
-setCell (3,1) Empty
-setCell (3,2) Empty
+setCell (2,9) Treasure (arcoCopiaC, "Me cansé")
+setCell (2,1) Enemy (posicion, "AAAAAAAAAAAAAA")
+setCell (9,3) Exit
+setCell (9,4) Closed
+setCell (3,4) Enemy (posicion, "AAAAAAAAAAAAAA")
+setCell (7,3) Enemy (posicion, "AAAAAAAAAAAAAA")
+setCell (5,5) Closed

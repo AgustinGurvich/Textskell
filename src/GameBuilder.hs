@@ -15,8 +15,10 @@ type MapEnv = M.Map (Int,Int) Cell
 initVarEnv :: VarEnv
 initVarEnv = M.empty
 
-initMapEnv :: MapEnv
-initMapEnv = M.empty
+initMapEnv :: (Int,Int) -> MapEnv
+-- initMapEnv (x,y) = M.empty
+initMapEnv (xMax,yMax) = M.fromList $ Prelude.map (\x -> (x,CEmpty)) emptyMap 
+          where emptyMap = concatMap (\x -> Prelude.map (\y -> (x,y)) [0..(yMax -1)]) [0..(xMax -1)]
 
 initPlayer :: Player
 initPlayer = Player (-1) (-1) (-1) (-1)
@@ -52,8 +54,8 @@ instance MonadState StateError where
 
 --Evaluador
 
-eval :: [Comm] -> Either Error (VarEnv,MapEnv,Player)
-eval c = eval' c initVarEnv initMapEnv initPlayer
+eval :: (Int, Int) -> [Comm] -> Either Error (VarEnv,MapEnv,Player)
+eval size c = eval' c initVarEnv (initMapEnv size) initPlayer
 
 eval' :: [Comm] -> VarEnv -> MapEnv -> Player -> Either Error (VarEnv,MapEnv,Player)
 eval' [] _ _ _  = Left InvalidValue 

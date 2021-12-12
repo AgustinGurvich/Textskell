@@ -26,6 +26,7 @@ import Data.Char
   Treasure    {TTreasure}
   Enemy       {TEnemy}
   Exit        {TExit} 
+  Closed      {TClosed}
   mapSize     {TMapSize}
 
 
@@ -51,6 +52,7 @@ Cell : Empty                                     {CEmpty}
      | Treasure '(' Atom ',' '"' Lore '"' ')'    {CTreasure $3 $6}
      | Enemy '(' Atom ',' '"' Lore '"' ')'       {CEnemy $3 $6}     
      | Exit                                      {CExit}
+     | Closed                                    {CClosed}
       
 Atom :: {Atom}
 Atom : '(' Int ',' Int ')'                         {Npc $2 $4} 
@@ -95,6 +97,7 @@ lexVar cs = case span isAlpha cs of
           ("Treasure", rest) -> TTreasure : lexer rest
           ("Enemy", rest) -> TEnemy : lexer rest
           ("Exit", rest) -> TExit : lexer rest
+          ("Closed", rest) -> TClosed : lexer rest
           ("mapSize",rest) -> TMapSize : lexer rest
           (s,rest) -> TVar s : lexer rest 
 

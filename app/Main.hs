@@ -9,6 +9,7 @@ import MapUtil
 import MonadFunctions
 import Data.Map.Strict as M
 import Data.Maybe
+import Data.Char
 
 import Control.Concurrent(threadDelay)
 import System.IO
@@ -30,12 +31,19 @@ pause n = do hFlush stdout
 main :: IO ()
 main = do args <- getArgs
           contents <- readFile $ head args
-          let evaluado = eval $ parse $ lexer contents
+          let casoCoordenadas = takeWhile (/= '\n') contents -- Saco la linea que tiene el tamaño del mapa
+          let limits = parseMap casoCoordenadas              -- Obtengo el tamaño del mapa de una forma poco elegante
+          let evaluado = eval limits $ parse $ lexer contents
           case evaluado of
               Left e -> putStrLn ("Error: " ++ errorHandler e)
               Right (v,m,p) -> do let m' = addJump m
                                   runStateT startGame (v,m',p)
                                   return ()
+  where parseMap s = let sacarPrimero = dropWhile (not . isDigit) s
+                         primerNumero = takeWhile (/= ',') sacarPrimero
+                         sacarSegundo = Prelude.drop 1 $ dropWhile (/= ',') s
+                         segundoNumero = takeWhile (/= ')') sacarSegundo
+                     in (read primerNumero, read segundoNumero)
 
 intro :: String
 intro = "Juego hecho en Textskell, TP realizado para la materia Analisis de Lenguajes de Programacion. Version 1.0"
@@ -58,10 +66,22 @@ move  = do liftIO $ movements
            bound <- getMapSize
            opt <- liftIO getLine
            case opt of
-             "1" -> if outOfBounds (xPos-1, yPos) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else updatePos (xPos-1, yPos)
-             "2" -> if outOfBounds (xPos+1, yPos) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else updatePos (xPos+1, yPos)
-             "3" -> if outOfBounds (xPos, yPos+1) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else updatePos (xPos, yPos+1)
-             "4" -> if outOfBounds (xPos, yPos-1) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else updatePos (xPos, yPos-1)
+             "1" -> if outOfBounds (xPos-1, yPos) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else do cell <- getCell (xPos-1, yPos)
+                                                                                                                              case cell of
+                                                                                                                                CClosed -> (liftIO . putStrLn) "Error: Movimiento invalido" >> move
+                                                                                                                                _ -> updatePos (xPos-1, yPos)
+             "2" -> if outOfBounds (xPos+1, yPos) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else do cell <- getCell (xPos+1, yPos)
+                                                                                                                              case cell of
+                                                                                                                                CClosed -> (liftIO . putStrLn) "Error: Movimiento invalido" >> move
+                                                                                                                                _ -> updatePos (xPos+1, yPos)
+             "3" -> if outOfBounds (xPos, yPos+1) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else do cell <- getCell (xPos, yPos+1)
+                                                                                                                              case cell of
+                                                                                                                                CClosed -> (liftIO . putStrLn) "Error: Movimiento invalido" >> move
+                                                                                                                                _ -> updatePos (xPos, yPos+1)
+             "4" -> if outOfBounds (xPos, yPos-1) bound then (liftIO . putStrLn) "Error: Movimiento invalido" >> move else do cell <- getCell (xPos, yPos-1)
+                                                                                                                              case cell of
+                                                                                                                                CClosed -> (liftIO . putStrLn) "Error: Movimiento invalido" >> move
+                                                                                                                                _ -> updatePos (xPos, yPos-1)
              "5" -> (liftIO . putStrLn) ("Vida: " ++ show hp) >> (liftIO . putStrLn) ("Daño: " ++ show dmg) >> move
              _ -> (liftIO . putStrLn) "Error: Opcion invalida" >> move
 
@@ -94,7 +114,7 @@ fightSimulation p@(Player pHp pDmg xPos yPos) e@(Npc eHp eDmg) 0 = do let eHp' =
                                                                                            if pHp' <= 0 then fightSimulation p e 2
                                                                                                         else fightSimulation (Player pHp' pDmg xPos yPos) (Npc eHp' eDmg) 0
 -- Gano
-fightSimulation p@(Player pHp pDmg xPos yPos) e@(Npc eHp eDmg) 1 = do liftIO $ putStrLn "Venciste al enemigo" 
+fightSimulation p@(Player pHp pDmg xPos yPos) e@(Npc eHp eDmg) 1 = do liftIO $ putStrLn "Venciste al enemigo"
                                                                       updatePlayer p
                                                                       updateCell (xPos, yPos) CEmpty
                                                                       return ()
@@ -128,6 +148,7 @@ handleEvent (CEnemy enemy@(Npc hp dmg) str) =  do liftIO $ putStrLn str
 handleEvent CExit = do liftIO (putStrLn "Llegaste a la salida!") >> gameLoop False
 handleEvent (CMapSize _ _) = do liftIO $ putStrLn "No deberias estar aqui"
 handleEvent CNewLine =  do liftIO $ putStrLn "No deberias estar aqui"
+handleEvent CClosed =  do liftIO $ putStrLn "No deberias estar aqui"
 
 gameLoop :: Bool -> GameState ()
 gameLoop True = do (v,m,p) <- get

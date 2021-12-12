@@ -18,6 +18,7 @@ data Comm = Assign String Atom
   -CEmpty: No hay nada
   -CTreasure: El contenido del tesoro, junto a una descripcion
   -CTreasure: El enemigo, junto a una descripcion
+  -CClosed: Celda cerrada
   -CExit: El objetivo final del juego
   -CMapSize: El tamaño del mapa, para acceder de forma rapida y hacer calculos
   -CNewLine: Para imprimir bien el mapa. TODO: ¿Se podria sacar?
@@ -25,6 +26,7 @@ data Comm = Assign String Atom
 data Cell = CEmpty
           | CTreasure Atom String
           | CEnemy Atom String
+          | CClosed
           | CExit
           | CMapSize Int Int
           | CNewLine
@@ -64,6 +66,7 @@ data Token =  TAss
             | TTreasure
             | TEnemy
             | TExit
+            | TClosed
             | TMapSize
 
 -- Errores para la monada

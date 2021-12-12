@@ -8,7 +8,6 @@ Juego:
 - Colorear todo
 
 Mapa:
-- Llenar el mapa con placeholders
 - Secciones inaccesibles en el mapa
 
 Parser:

@@ -16,7 +16,7 @@ addJump' m x y = M.insert (x,y) CNewLine (addJump' m (x-1) y)
 
 -- Imprime el mapa
 printMap :: MapEnv -> Player -> IO ()
-printMap m (Player _ _ x y) = mapM_ (printCell (x,y)) (M.toList m) >> setSGR[Reset] 
+printMap m (Player _ _ x y) = putStrLn "" >> mapM_ (printCell (x,y)) (M.toList m) >> setSGR[Reset] >> putStrLn ""
 
 -- Dada la posicion del jugador y una celda del mapa, lo imprime
 printCell :: (Int,Int) -> ((Int,Int) , Cell) -> IO ()
@@ -26,6 +26,7 @@ cellSymbol :: Cell -> IO ()
 cellSymbol CEmpty = setSGR[SetColor Foreground Dull White] >> putStr "x"
 cellSymbol (CTreasure _ _) = setSGR[SetColor Foreground Dull Green] >> putStr "$" 
 cellSymbol (CEnemy _ _) = setSGR[SetColor Foreground Dull Red] >> putStr "!" 
+cellSymbol CClosed = putStr " "
 cellSymbol CExit = setSGR[SetColor Foreground Dull Blue] >> putStr "O" 
 cellSymbol (CMapSize _ _) =  putStr "" 
 cellSymbol CNewLine = putStr "\n"
