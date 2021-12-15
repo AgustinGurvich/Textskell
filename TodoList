@@ -1,8 +1,5 @@
 Juego:
 - Adaptar las coordenadas del personaje a pares
-- Colorear todo
-- Tirar error si no se llenan los mensajes del menu
 
 Parser:
-- Agregar textos del juego como tokens
-- Pretty Printing del codigo
+- Hacerlo monadico

@@ -7,6 +7,7 @@ import System.Environment (getArgs)
 import GameBuilder
 import MapUtil
 import GameState
+import PPrint
 import Data.Map.Strict as M
 import Data.Maybe
 import Data.Char
@@ -32,20 +33,35 @@ pause n = do hFlush stdout
 main :: IO ()
 main = do args <- getArgs
           contents <- readFile $ head args
+          let [opt] = tail args 
           let casoCoordenadas = takeWhile (/= '\n') contents -- Saco la linea que tiene el tamaño del mapa
           let limits = parseMap casoCoordenadas              -- Obtengo el tamaño del mapa de una forma poco elegante
           let evaluado = eval limits $ parse $ lexer contents
           case evaluado of
               Left e -> putStrLn ("Error: " ++ errorHandler e)
-              Right (v,m,p,c) -> if M.size c == 28 then do let m' = addJump m
-                                                           runStateT startGame (v,m',p,c)
-                                                           return ()
+              Right (v,m,p,c) -> if M.size c == 28 then do case opt of
+                                                            "play" -> do let m' = addJump m
+                                                                         runStateT startGame (v,m',p,c)
+                                                                         return ()
+                                                            "pretty" -> prettyPrint v m p c
                                                    else putStrLn "Error: Menu incompleto"
   where parseMap s = let sacarPrimero = dropWhile (not . isDigit) s
                          primerNumero = takeWhile (/= ',') sacarPrimero
                          sacarSegundo = Prelude.drop 1 $ dropWhile (/= ',') s
                          segundoNumero = takeWhile (/= ')') sacarSegundo
                      in (read primerNumero, read segundoNumero)
+
+
+prettyPrint :: VarEnv -> MapEnv -> Player -> MenuEnv -> IO ()
+prettyPrint v m p c = do putStrLn $ ppPrompt "VARIABLES DEFINIDAS"
+                         mapM_ (putStrLn . ppAtom) (M.toList v) >> putStrLn ""
+                         putStrLn $ ppPrompt "CELDAS DEFINIDAS"
+                         mapM_ (putStrLn . ppMap) (M.toList m) >> putStrLn ""
+                         putStrLn $ ppPrompt "MENU DEFINIDO"
+                         mapM_ (putStrLn . ppMenu) (M.toList c) >> putStrLn ""
+                         putStrLn $ ppPrompt "JUGADOR DEFINIDO"
+                         (putStrLn $ ppPlayer p) >> putStrLn ""
+                         return ()
 
 replaceStr :: Char -> String -> String -> String
 replaceStr w s [] = []
