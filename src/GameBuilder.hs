@@ -10,21 +10,24 @@ import Monads
 -- Entornos de almacenamiento
 type VarEnv = M.Map String Atom
 type MapEnv = M.Map (Int,Int) Cell
+type MenuEnv = M.Map Menu String
 
 -- Inicializadores de entornos
 initVarEnv :: VarEnv
 initVarEnv = M.empty
 
 initMapEnv :: (Int,Int) -> MapEnv
--- initMapEnv (x,y) = M.empty
 initMapEnv (xMax,yMax) = M.fromList $ Prelude.map (\x -> (x,CEmpty)) emptyMap 
           where emptyMap = concatMap (\x -> Prelude.map (\y -> (x,y)) [0..(yMax -1)]) [0..(xMax -1)]
 
 initPlayer :: Player
 initPlayer = Player (-1) (-1) (-1) (-1)
 
+initMenuEnv :: MenuEnv
+initMenuEnv = M.empty
+
 -- Monada de estado con manejo de errores
-newtype StateError a = StateError {runStateError :: VarEnv -> MapEnv ->  Player -> Either Error (a, VarEnv, MapEnv,Player)}
+newtype StateError a = StateError {runStateError :: VarEnv -> MapEnv ->  Player -> MenuEnv ->Either Error (a, VarEnv, MapEnv,Player,MenuEnv)}
 
 instance Functor StateError where
   fmap = liftM
@@ -34,33 +37,37 @@ instance Applicative StateError where
   (<*>) = ap
 
 instance Monad StateError where
-  return x = StateError (\v m p -> Right (x,v,m,p))
-  a >>= f = StateError (\v m p -> runStateError a v m p >>= \(x,v',m',p') -> runStateError (f x) v' m' p')
+  return x = StateError (\v m p c -> Right (x,v,m,p,c))
+  a >>= f = StateError (\v m p c -> runStateError a v m p c >>= \(x,v',m',p',c') -> runStateError (f x) v' m' p' c')
 
 instance MonadError StateError where
-  throw e = StateError (\v m p -> Left e)
+  throw e = StateError (\v m p c -> Left e)
 
 instance MonadState StateError where
-  lookforVar s = StateError (\v m p -> case M.lookup s v of
-                                        Nothing -> Left UndefVar
-                                        Just x -> Right(x,v,m,p))
-  lookforCell s = StateError (\v m p -> case M.lookup s m of
-                                        Nothing -> Left UndefCell
-                                        Just x -> Right(x,v,m,p))
-  getMapSize = StateError (\v m p -> Right (fromJust $ M.lookup (-1,-1) m,v,m,p ) )
-  updateVar s a = StateError (\v m p -> Right ((),update' s a v, m,p)) where update' = M.insert
-  updateCell s a = StateError (\v m p -> Right ((),v, update' s a m,p)) where update' = M.insert
-  updatePlayer s = StateError (\v m p -> Right ((),v,m,s)) 
+  lookforVar s = StateError (\v m p c -> case M.lookup s v of
+                                        Nothing -> Left $ UndefVar s
+                                        Just x -> Right(x,v,m,p,c))
+  lookforCell s = StateError (\v m p c -> case M.lookup s m of
+                                        Nothing -> Left $ UndefCell s
+                                        Just x -> Right(x,v,m,p,c))
+  lookforMenu s = StateError (\v m p c -> case M.lookup s c of
+                                        Nothing -> Left $ UndefMenu s
+                                        Just x -> Right(x,v,m,p,c))
+  getMapSize = StateError (\v m p c -> Right (fromJust $ M.lookup (-1,-1) m,v,m,p,c) )
+  updateVar s a = StateError (\v m p c -> Right ((),update' s a v, m,p,c)) where update' = M.insert
+  updateCell s a = StateError (\v m p c -> Right ((),v, update' s a m,p,c)) where update' = M.insert
+  updatePlayer s = StateError (\v m p c -> Right ((),v,m,s,c)) 
+  updateMenu s a = StateError (\v m p c -> Right ((),v, m,p,update' s a c)) where update' = M.insert
 
 --Evaluador
 
-eval :: (Int, Int) -> [Comm] -> Either Error (VarEnv,MapEnv,Player)
-eval size c = eval' c initVarEnv (initMapEnv size) initPlayer
+eval :: (Int, Int) -> [Comm] -> Either Error (VarEnv,MapEnv,Player,MenuEnv)
+eval size c = eval' c initVarEnv (initMapEnv size) initPlayer initMenuEnv
 
-eval' :: [Comm] -> VarEnv -> MapEnv -> Player -> Either Error (VarEnv,MapEnv,Player)
-eval' [] _ _ _  = Left InvalidValue 
-eval' [x] var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) -> return (v,m,p)
-eval' (x:xs) var map player = runStateError (evalComm x) var map player >>= \(_,v,m,p) -> eval' xs v m p  
+eval' :: [Comm] -> VarEnv -> MapEnv -> Player -> MenuEnv -> Either Error (VarEnv,MapEnv,Player,MenuEnv)
+eval' [] _ _ _  _ = Left $ InvalidValue "Archivo vacio"
+eval' [x] var map player menu = runStateError (evalComm x) var map player menu >>= \(_,v,m,p,c) -> return (v,m,p,c)
+eval' (x:xs) var map player menu = runStateError (evalComm x) var map player menu >>= \(_,v,m,p,c) -> eval' xs v m p c  
 
 outOfBounds :: (Int,Int) -> (Int,Int) -> Bool 
 outOfBounds (x,y) (xbound,ybound) = x < 0 || y < 0 || x >= xbound || y >= ybound
@@ -72,16 +79,46 @@ evalComm (Assign s v) = case v of
                           n -> do updateVar s n -- Creo la variable
 evalComm (CreatePlayer p@(Player hp dmg x y)) = do mapa <- getMapSize --Busco los limites del mapa
                                                    let (CMapSize xbound ybound) = mapa
-                                                   if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else if hp < 1 || dmg < 0 then throw InvalidValue else updatePlayer p 
+                                                   if outOfBounds (x,y) (xbound,ybound) then throw $ InvalidPos (x,y) else if hp < 1 || dmg < 0 then throw $ InvalidValue (show (x,y)) else updatePlayer p 
 evalComm (CreateCell x y (CTreasure (Var v) s)) = do var <- lookforVar v
                                                      mapa <- getMapSize 
                                                      let (CMapSize xbound ybound) = mapa
-                                                     if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else updateCell (x,y) (CTreasure var s)
+                                                     if outOfBounds (x,y) (xbound,ybound) then throw $ InvalidPos (x,y) else updateCell (x,y) (CTreasure var s)
 evalComm (CreateCell x y (CEnemy (Var v) s)) = do var <- lookforVar v
                                                   mapa <- getMapSize
                                                   let (CMapSize xbound ybound) = mapa
-                                                  if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else updateCell (x,y) (CEnemy var s)
+                                                  if outOfBounds (x,y) (xbound,ybound) then throw $ InvalidPos (x,y) else updateCell (x,y) (CEnemy var s)
 evalComm (CreateCell x y c) = do mapa <- getMapSize 
                                  let (CMapSize xbound ybound) = mapa
-                                 if outOfBounds (x,y) (xbound,ybound) then throw InvalidPos else updateCell (x,y) c -- Para las celdas vacias
+                                 if outOfBounds (x,y) (xbound,ybound) then throw $ InvalidPos (x,y) else updateCell (x,y) c -- Para las celdas vacias
 evalComm (SetMapSize x y) = do updateCell (-1,-1) (CMapSize x y) -- Creo el tamaño del mapa
+evalComm (SetMenu menu txt) = updateMenu (stringToMenu menu) txt
+                              where stringToMenu "Title" = Title 
+                                    stringToMenu "InvalidMovement" = InvalidMovement
+                                    stringToMenu "DeathMessage"    = DeathMsg
+                                    stringToMenu "EmptyCell" = EmptyCellMsg
+                                    stringToMenu "ExitMessage" = ExitMsg
+                                    stringToMenu "FightVictory" = FightVictoryMsg
+                                    stringToMenu "CurrentPosition" = CurrentPos
+                                    stringToMenu "EnemyHp" = EnemyHp 
+                                    stringToMenu "EnemyDmg" = EnemyDmg
+                                    stringToMenu "RunAway" = RunAway
+                                    stringToMenu "InvalidOption" = InvalidOption
+                                    stringToMenu "CurrentHp" = CurrentHp
+                                    stringToMenu "CurrentDmg" = CurrentDmg
+                                    stringToMenu "DmgMod" = DmgMod
+                                    stringToMenu "HpMod" = HpMod
+                                    stringToMenu "GameOver" = GameOver
+                                    stringToMenu "MoveQuestion" = MoveQuestion
+                                    stringToMenu "MoveNorth" = MoveN
+                                    stringToMenu "MoveSouth" = MoveS
+                                    stringToMenu "MoveEast" = MoveE
+                                    stringToMenu "MoveWest" = MoveW
+                                    stringToMenu "Stats" = Stats 
+                                    stringToMenu "ActionPrompt" = ActionPrompt
+                                    stringToMenu "Grab" = Grab
+                                    stringToMenu "Drop" = Drop
+                                    stringToMenu "FightPrompt" = FightPrompt
+                                    stringToMenu "Fight" = Fight
+                                    stringToMenu "Escape" = Escape
+                                    stringToMenu _ = undefined -- Para calmar al linter

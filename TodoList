@@ -1,17 +1,8 @@
-Monada:
-- Cual es la mejor forma de guardar el estado
-- Como guardar settings globales
-
 Juego:
 - Adaptar las coordenadas del personaje a pares
-- Inventario
 - Colorear todo
-
-Mapa:
-- Secciones inaccesibles en el mapa
+- Tirar error si no se llenan los mensajes del menu
 
 Parser:
-- Cambiar el parser para aceptar simbolos y numeros
-- Aceptar NPC como variables
 - Agregar textos del juego como tokens
 - Pretty Printing del codigo

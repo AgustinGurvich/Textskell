@@ -33,7 +33,7 @@ library
       MapUtil
       Monads
       Parser
-      MonadFunctions
+      GameState
   other-modules:
       Paths_textskell
   hs-source-dirs:

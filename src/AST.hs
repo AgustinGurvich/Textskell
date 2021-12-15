@@ -11,6 +11,14 @@ data Comm = Assign String Atom
           | CreatePlayer Player
           | CreateCell Int Int Cell
           | SetMapSize Int Int
+          | SetMenu String String
+          -- | SetTitle String
+          -- | SetInvalidMovement String
+          -- | SetDeathMsg String
+          -- | SetEmptyCellMsg String
+          -- | SetExitMsg String
+          -- | SetFightVictoryMsg String
+          -- | SetInvalidOpt String
             deriving (Show, Eq)
 
 {-
@@ -46,6 +54,36 @@ data Atom = Npc Int Int
 -- El jugador que tiene vida, daño, posX y posY
 data Player = Player Int Int Int Int deriving (Show, Eq)
 
+data Menu = Title
+          | InvalidMovement
+          | DeathMsg
+          | EmptyCellMsg
+          | ExitMsg
+          | FightVictoryMsg
+          | CurrentPos
+          | EnemyHp
+          | EnemyDmg
+          | RunAway
+          | InvalidOption
+          | CurrentHp
+          | CurrentDmg
+          | HpMod
+          | DmgMod
+          | GameOver
+          | MoveQuestion
+          | MoveN
+          | MoveS
+          | MoveE
+          | MoveW
+          | Stats
+          | ActionPrompt
+          | Grab
+          | Drop
+          | FightPrompt
+          | Fight
+          | Escape
+            deriving (Show,Eq, Ord)
+
 -- Las estadisticas que se pueden modificar
 data Buff = Dmg | HP deriving (Show, Eq) 
 
@@ -68,6 +106,12 @@ data Token =  TAss
             | TExit
             | TClosed
             | TMapSize
-
+            | TMenu
+            -- | TTitle
+            -- | TInvalidMovement
+            -- | TDeathMsg
+            -- | TEmptyCellMsg
+            -- | TExitMsg
+            -- | TFightVictoryMsg
 -- Errores para la monada
-data Error = UndefVar | UndefCell | InvalidPos | TypeError | InvalidValue deriving (Eq,Show)
+data Error = UndefVar String | UndefCell (Int,Int) | UndefMenu Menu | InvalidPos (Int,Int) | TypeError String| InvalidValue String deriving (Eq,Show)

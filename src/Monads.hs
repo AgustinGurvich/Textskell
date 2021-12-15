@@ -12,5 +12,8 @@ class Monad m => MonadState m where
     updatePlayer :: Player -> m ()
     getMapSize :: m Cell
 
+    lookforMenu :: Menu -> m String 
+    updateMenu :: Menu -> String -> m ()
+
 class Monad m => MonadError m where
     throw :: Error -> m a 

@@ -10,25 +10,25 @@ import Data.Char
 
 
 %token
-  '<-'        {TAss}
-  '('         {TOpen}
-  ')'         {TClose}
-  ','         {TComma}
-  '"'         {TQuote}
-  setPlayer   {TPlayer}
-  setCell     {TCell}
-  Dmg         {TDmg}
-  HP          {THp}
-  Int         {TInt $$}
-  Var         {TVar $$}
-  Lore        {TLore $$}
-  Empty       {TEmpty}
-  Treasure    {TTreasure}
-  Enemy       {TEnemy}
-  Exit        {TExit} 
-  Closed      {TClosed}
-  mapSize     {TMapSize}
-
+  '<-'               {TAss}
+  '('                {TOpen}
+  ')'                {TClose}
+  ','                {TComma}
+  '"'                {TQuote}
+  setPlayer          {TPlayer}
+  setCell            {TCell}
+  Dmg                {TDmg}
+  HP                 {THp}
+  Int                {TInt $$}
+  Var                {TVar $$}
+  Lore               {TLore $$}
+  Empty              {TEmpty}
+  Treasure           {TTreasure}
+  Enemy              {TEnemy}
+  Exit               {TExit} 
+  Closed             {TClosed}
+  mapSize            {TMapSize}
+  setMenu            {TMenu}    
 
 
 
@@ -46,7 +46,8 @@ Comm :: {Comm}
 Comm : Var '<-' Atom                             {Assign $1 $3}
      | setPlayer Player                          {CreatePlayer $2}
      | setCell '(' Int ',' Int ')' Cell          {CreateCell $3 $5 $7}
-
+     | setMenu '(' Var ',' '"' Lore '"' ')'     {SetMenu $3 $6}
+     
 Cell :: {Cell}
 Cell : Empty                                     {CEmpty} 
      | Treasure '(' Atom ',' '"' Lore '"' ')'    {CTreasure $3 $6}
@@ -99,6 +100,7 @@ lexVar cs = case span isAlpha cs of
           ("Exit", rest) -> TExit : lexer rest
           ("Closed", rest) -> TClosed : lexer rest
           ("mapSize",rest) -> TMapSize : lexer rest
+          ("setMenu", rest) -> TMenu : lexer rest
           (s,rest) -> TVar s : lexer rest 
 
 -- TO DO: Parsear la extension del archivo 
