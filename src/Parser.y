@@ -7,6 +7,7 @@ import Data.Char
 %name parse 
 %tokentype { Token }
 %error { parseError }
+%monad {E} {thenE} {returnE}
 
 
 %token
@@ -61,7 +62,7 @@ Atom : '(' Int ',' Int ')'                         {Npc $2 $4}
 	| Var		                               {Var $1}			
 
 Player :: {Player}
-Player : '(' Int ',' Int ',' '(' Int ',' Int ')' ')'  {Player $2 $4 $7 $9}
+Player : '(' Int ',' Int ',' '(' Int ',' Int ')' ')'  {Player $2 $4 ($7,$9)}
 
 Buff :: {Buff}
 Buff : Dmg                                         {Dmg}
@@ -71,8 +72,26 @@ Buff : Dmg                                         {Dmg}
 
 
 {
-parseError :: [Token] -> a
-parseError _ = error "Parse error" 
+data E a = Ok a | Failed String
+
+thenE :: E a -> (a -> E b) -> E b
+m `thenE` k = case m of 
+               Ok a -> k a
+               Failed e -> Failed e
+
+returnE :: a -> E a
+returnE a = Ok a
+
+failE :: String -> E a
+failE err = Failed err
+
+catchE :: E a -> (String -> E a) -> E a
+catchE m k = case m of
+               Ok a     -> Ok a
+               Failed e -> k e
+
+parseError :: [Token] -> E a
+parseError tokens = failE "Parse error" 
 
 lexer [] = []
 lexer ('<':'-':cs) = TAss : lexer cs
@@ -101,8 +120,5 @@ lexVar cs = case span isAlpha cs of
           ("Closed", rest) -> TClosed : lexer rest
           ("mapSize",rest) -> TMapSize : lexer rest
           ("setMenu", rest) -> TMenu : lexer rest
-          (s,rest) -> TVar s : lexer rest 
-
--- TO DO: Parsear la extension del archivo 
-
+          (s,rest) -> TVar s : lexer rest  
 }

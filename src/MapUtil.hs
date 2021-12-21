@@ -16,7 +16,7 @@ addJump' m x y = M.insert (x,y) CNewLine (addJump' m (x-1) y)
 
 -- Imprime el mapa
 printMap :: MapEnv -> Player -> IO ()
-printMap m (Player _ _ x y) = putStrLn "" >> mapM_ (printCell (x,y)) (M.toList m) >> setSGR[Reset] >> putStrLn ""
+printMap m (Player _ _ pos) = putStrLn "" >> mapM_ (printCell pos) (M.toList m) >> setSGR[Reset] >> putStrLn ""
 
 -- Dada la posicion del jugador y una celda del mapa, lo imprime
 printCell :: (Int,Int) -> ((Int,Int) , Cell) -> IO ()
@@ -30,13 +30,3 @@ cellSymbol CClosed = putStr " "
 cellSymbol CExit = setSGR[SetColor Foreground Dull Blue] >> putStr "O" 
 cellSymbol (CMapSize _ _) =  putStr "" 
 cellSymbol CNewLine = putStr "\n"
-
--- printEvent :: (Int,Int) -> MapEnv -> IO Cell
--- printEvent p@(xPos,yPos) m = do let cell = fromJust $ M.lookup p m 
---                                 case cell of
---                                     CEmpty -> putStrLn "Nada que ver aqui" 
---                                     (CTreasure a lore) -> putStrLn lore
---                                     (CEnemy a lore) -> putStrLn lore
---                                     (CExit) -> putStrLn "Salida"
---                                     _ -> putStrLn "Whoops no deberias estar aqui"
---                                 return cell 

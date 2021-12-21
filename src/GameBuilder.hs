@@ -21,7 +21,7 @@ initMapEnv (xMax,yMax) = M.fromList $ Prelude.map (\x -> (x,CEmpty)) emptyMap
           where emptyMap = concatMap (\x -> Prelude.map (\y -> (x,y)) [0..(yMax -1)]) [0..(xMax -1)]
 
 initPlayer :: Player
-initPlayer = Player (-1) (-1) (-1) (-1)
+initPlayer = Player (-1) (-1) (-1, -1)
 
 initMenuEnv :: MenuEnv
 initMenuEnv = M.empty
@@ -77,9 +77,9 @@ evalComm (Assign s v) = case v of
                           Var x -> do var <- lookforVar x --Si la variable esta definida, la defino con otro nombre. Sino, se propaga solo el error
                                       updateVar s var
                           n -> do updateVar s n -- Creo la variable
-evalComm (CreatePlayer p@(Player hp dmg x y)) = do mapa <- getMapSize --Busco los limites del mapa
-                                                   let (CMapSize xbound ybound) = mapa
-                                                   if outOfBounds (x,y) (xbound,ybound) then throw $ InvalidPos (x,y) else if hp < 1 || dmg < 0 then throw $ InvalidValue (show (x,y)) else updatePlayer p 
+evalComm (CreatePlayer p@(Player hp dmg (x,y))) = do mapa <- getMapSize --Busco los limites del mapa
+                                                     let (CMapSize xbound ybound) = mapa
+                                                     if outOfBounds (x,y) (xbound,ybound) then throw $ InvalidPos (x,y) else if hp < 1 || dmg < 0 then throw $ InvalidValue (show (hp,dmg)) else updatePlayer p 
 evalComm (CreateCell x y (CTreasure (Var v) s)) = do var <- lookforVar v
                                                      mapa <- getMapSize 
                                                      let (CMapSize xbound ybound) = mapa

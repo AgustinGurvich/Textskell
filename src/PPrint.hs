@@ -39,8 +39,8 @@ enemy2Doc str = enemyColor $ pretty str
 lore2Doc :: String -> Doc AnsiStyle
 lore2Doc str = loreColor $ pretty str
 
-coord2Doc :: Int -> Int -> Doc AnsiStyle
-coord2Doc x y = tupled [pretty x,pretty y]
+coord2Doc :: (Int,Int) -> Doc AnsiStyle
+coord2Doc (x,y) = tupled [pretty x,pretty y]
 
 exit2Doc :: String -> Doc AnsiStyle
 exit2Doc str = exitColor $ pretty str
@@ -51,14 +51,14 @@ cell2Doc (CTreasure item lore) = treasure2Doc "Tesoro:" <> line <> indent 6 (ato
 cell2Doc (CEnemy enemy lore) =  enemy2Doc "Enemigo:" <> line <> indent 6 (atom2Doc enemy <> line <> pretty "Lore: " <> lore2Doc lore)
 cell2Doc CClosed =blockedCellColor $ pretty "Celda Inaccesible"
 cell2Doc CExit = exit2Doc "Salida"
-cell2Doc (CMapSize x y) = pretty "Tamaño del mapa: " <> coord2Doc x y
+cell2Doc (CMapSize x y) = pretty "Tamaño del mapa: " <> coord2Doc (x,y)
 cell2Doc CNewLine = undefined
 
 ppCell :: Cell -> String
 ppCell = render . cell2Doc
 
 map2Doc :: ((Int,Int),Cell) -> Doc AnsiStyle
-map2Doc ((x,y),c) = coord2Doc x y <> pretty ":" <+> cell2Doc c
+map2Doc (pos,c) = coord2Doc pos <> pretty ":" <+> cell2Doc c
 
 ppMap :: ((Int,Int),Cell) -> String
 ppMap = render . map2Doc
@@ -87,8 +87,8 @@ var2Doc var = varColor $ pretty var
 
 atom2Doc :: Atom -> Doc AnsiStyle
 atom2Doc (Npc hp dmg) = pretty "Vida Enemigo:" <+> hp2Doc hp <> line <> pretty "Daño enemigo:" <+> dmg2Doc dmg
-atom2Doc (Item lore Dmg value) = pretty "Objeto:" <+> lore2Doc lore <> line <> pretty "Buff: " <+> buff2Doc (show Dmg) <>line <> pretty "Valor" <+> dmg2Doc value
-atom2Doc (Item lore HP value) = pretty "Objeto:" <+> lore2Doc lore <> line <> pretty "Buff: " <+> buff2Doc (show HP) <>line <> pretty "Valor" <+> hp2Doc value
+atom2Doc (Item lore Dmg value) = pretty "Objeto:" <+> lore2Doc lore <> line <> pretty "Buff:" <+> buff2Doc (show Dmg) <>line <> pretty "Valor:" <+> dmg2Doc value
+atom2Doc (Item lore HP value) = pretty "Objeto:" <+> lore2Doc lore <> line <> pretty "Buff:" <+> buff2Doc (show HP) <>line <> pretty "Valor:" <+> hp2Doc value
 atom2Doc (Var str) = pretty "Variable:" <+> pretty str
 
 ppAtom :: (String,Atom) -> String
@@ -102,7 +102,7 @@ player2Doc :: String -> Doc AnsiStyle
 player2Doc str = playerColor $ pretty str
 
 ppPlayer :: Player -> String
-ppPlayer (Player hp dmg x y) = render $ player2Doc "Jugador" <> colon <> line <> indent 4 (pretty "Vida Jugador:" <+> hp2Doc hp <> line <> pretty "Daño Jugador:" <+> dmg2Doc dmg <> line <> pretty "Posicion Inicial:" <+> coord2Doc x y )
+ppPlayer (Player hp dmg pos) = render $ player2Doc "Jugador" <> colon <> line <> indent 4 (pretty "Vida Jugador:" <+> hp2Doc hp <> line <> pretty "Daño Jugador:" <+> dmg2Doc dmg <> line <> pretty "Posicion Inicial:" <+> coord2Doc pos )
 
 -- Pretty pritner para Menu
 
@@ -126,3 +126,16 @@ promptColor = annotate (color Black <> bold)
 ppPrompt :: String -> String
 ppPrompt string = render $ promptColor $ pretty string
 
+errorColor = annotate (color Red <> bold)
+
+error2Doc :: Error -> Doc AnsiStyle
+error2Doc (UndefVar s) = errorColor $ pretty $ "Variable no definida: " ++ s 
+error2Doc (UndefCell s ) = errorColor $ pretty $ "Celda no definida: " ++ show s
+error2Doc (UndefMenu s ) = errorColor $ pretty $ "Opcion de menu invalida: " ++ show s
+error2Doc (InvalidPos s) = errorColor $ pretty $ "Posicion invalida: " ++ show s
+error2Doc (InvalidValue s ) = errorColor $  pretty $ "Valor invalido: " ++ show s
+error2Doc (IncompleteMenu s) = errorColor $  pretty $ "Menu incompleto: " ++ show s
+error2Doc (InvalidArgument s ) = errorColor $  pretty $ "Argumento invalido: " ++ show s
+
+ppError :: Error -> String
+ppError = render . error2Doc 

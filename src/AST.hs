@@ -52,7 +52,7 @@ data Atom = Npc Int Int
             deriving (Show, Eq)
 
 -- El jugador que tiene vida, daño, posX y posY
-data Player = Player Int Int Int Int deriving (Show, Eq)
+data Player = Player Int Int (Int,Int) deriving (Show, Eq)
 
 data Menu = Title
           | InvalidMovement
@@ -107,11 +107,13 @@ data Token =  TAss
             | TClosed
             | TMapSize
             | TMenu
-            -- | TTitle
-            -- | TInvalidMovement
-            -- | TDeathMsg
-            -- | TEmptyCellMsg
-            -- | TExitMsg
-            -- | TFightVictoryMsg
+
 -- Errores para la monada
-data Error = UndefVar String | UndefCell (Int,Int) | UndefMenu Menu | InvalidPos (Int,Int) | TypeError String| InvalidValue String deriving (Eq,Show)
+data Error = UndefVar String 
+           | UndefCell (Int,Int)  
+           | UndefMenu Menu  
+           | InvalidPos (Int,Int) 
+           | InvalidValue String 
+           | IncompleteMenu Menu
+           | InvalidArgument String
+           deriving (Eq,Show)

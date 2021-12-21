@@ -43,8 +43,8 @@ getMenuOpt p = do (_,_,_,c) <-  get
                   return $ fromJust $ M.lookup p c
 
 getPos :: GameState (Int,Int)
-getPos = do (Player _ _ xPos yPos) <- getPlayer
-            return (xPos,yPos)
+getPos = do (Player _ _ pos) <- getPlayer
+            return pos
 
 getMovementOpt :: GameState (String,String,String,String,String,String)
 getMovementOpt = do moveQ <- getMenuOpt MoveQuestion
@@ -89,8 +89,8 @@ updateCell pos cell = do m <- getMap
                          updateMap m'
 
 updatePos :: (Int,Int) -> GameState ()
-updatePos (x,y) = do (Player hp dmg _ _) <-getPlayer
-                     updatePlayer $ Player hp dmg x y
+updatePos pos = do (Player hp dmg _) <-getPlayer
+                   updatePlayer $ Player hp dmg pos
 
 updateMenuOpt :: Menu -> String -> GameState ()
 updateMenuOpt m str = do c <- getMenu
