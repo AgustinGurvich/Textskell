@@ -12,13 +12,6 @@ data Comm = Assign String Atom
           | CreateCell Int Int Cell
           | SetMapSize Int Int
           | SetMenu String String
-          -- | SetTitle String
-          -- | SetInvalidMovement String
-          -- | SetDeathMsg String
-          -- | SetEmptyCellMsg String
-          -- | SetExitMsg String
-          -- | SetFightVictoryMsg String
-          -- | SetInvalidOpt String
             deriving (Show, Eq)
 
 {-
@@ -56,10 +49,10 @@ data Player = Player Int Int (Int,Int) deriving (Show, Eq)
 
 data Menu = Title
           | InvalidMovement
-          | DeathMsg
-          | EmptyCellMsg
-          | ExitMsg
-          | FightVictoryMsg
+          | Death
+          | EmptyCell
+          | Exit
+          | FightVictory
           | CurrentPos
           | EnemyHp
           | EnemyDmg

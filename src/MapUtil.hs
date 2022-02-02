@@ -3,7 +3,7 @@ module MapUtil where
 import AST
 import GameBuilder
 import Data.Map.Strict as M
-import Data.Maybe
+import Data.Maybe ( fromJust )
 import System.Console.ANSI
 
 -- Le añade al mapa saltos de linea para una mejor impresion

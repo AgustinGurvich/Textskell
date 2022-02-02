@@ -6,7 +6,7 @@ import System.IO
 import System.Console.ANSI
 import Control.Monad.State
 import Data.Map.Strict as M 
-import Data.Maybe
+import Data.Maybe ( fromJust )
 
 type GameState a = StateT (VarEnv, MapEnv, Player, MenuEnv) IO a
 
