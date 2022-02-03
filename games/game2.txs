@@ -1,0 +1,59 @@
+mapSize (5,5)
+
+setPlayer (100, 10, (0,0))
+
+tomacorrienteDebil <- ("Tomacorriente pequeño", Hp, 25)
+tomacorrienteMedio <- ("Tomacorriente mediano", Hp, 50)
+tomacorrienteFuerte <- ("Tomacorriente sobrecargado", Hp, 100)
+
+enemigoDebil <- (10,10)
+guardia <- (50,10)
+
+setCell (0,1) Enemy (enemigoDebil, "Este enemigo está a punto de quedarse sin energía")
+setCell (1,0) Enemy (enemigoDebil, "Este enemigo está a punto de quedarse sin energía")
+setCell (3,4) Enemy ((100,20), "Un robot gigante se impone entre vos y tu escape")
+setCell (2,4) Enemy ((50,25), "Un enemigo que quiere evitar tu escape")
+setCell (0,4) Enemy ((40,70), "Parece que a este enemigo solo le queda energía para un golpe final")
+setCell (3,1) Enemy (guardia, "Un guardia muy cansado detiene tu paso")
+setCell (3,0) Enemy (guardia, "Un guardia muy cansado detiene tu paso")
+setCell (3,2) Enemy (guardia, "Un guardia muy cansado detiene tu paso")
+
+setCell (2,2) Closed
+setCell (3,3) Closed
+setCell (4,3) Closed
+
+setCell (4,2) Treasure (tomacorrienteFuerte, "Este lugar irradia una energía extraña")
+setCell (1,4) Treasure (tomacorrienteFuerte, "Parece un buen lugar para recargar energía")
+setCell (1,1) Treasure (("Cristal de energía", Dmg, 20), "Encontraste una toma de poder para tu lanza")
+setCell (4,1) Treasure (("Cristal de energía explosivo", Dmg, 50), "Encontraste una toma de poder para tu lanza, parece que esta rota")
+
+setCell (4,4) Exit
+
+setMenu (Title, "En el año 2222 el deporte número uno en el mundo es la pelea de gladiadores. Cada gladiador cuenta con un escudo y una lanza, el ganador es el último en pie. Vos sos un inexperto combatiente que quiere escapar de su destino. ¿Te atreves a tomar el desafío?")
+setMenu (InvalidMovement, "No puedes acceder allí")
+setMenu (Death, "No tienes energía en tu escudo, vuelve a esconderte e intenta otro día")
+setMenu (EmptyCell, "Puedes descansar por un momento")
+setMenu (ExitMessage, "Llegaste a la salida de la arena, lograste escapar")
+setMenu (FightVictory, "El enemigo no puede moverse más")
+setMenu (CurrentPosition, "Te encuentras en ")
+setMenu (EnemyDmg, "Daño del arma enemiga: *%")
+setMenu (EnemyHp, "Porcentaje de escudo enemigo: *%")
+setMenu (RunAway, "Escapaste con éxito!")
+setMenu (InvalidOption, "Opción inválida")
+setMenu (CurrentHp, "Porcentaje de esucudo actual: *%")
+setMenu (CurrentDmg, "Daño actual del arma: *")
+setMenu (HpMod, "Recuperaste *% de escudo")
+setMenu (DmgMod, "Añadidos * puntos de daño a tu arma")
+setMenu (GameOver, "Gracias por jugar!")
+setMenu (MoveQuestion, "¿Hacia donde vamos?")
+setMenu (MoveNorth, "Arriba")
+setMenu (MoveSouth, "Abajo")
+setMenu (MoveEast, "Derecha")
+setMenu (MoveWest, "Izquierda")
+setMenu (Stats, "Ver mis estadísticas")
+setMenu (ActionPrompt, "¿Te conectas?")
+setMenu (Grab, "Conectarse")
+setMenu (Drop, "Dejarlo")
+setMenu (FightPrompt, "¿Peleas?")
+setMenu (Fight, "Si")
+setMenu (Escape, "No")

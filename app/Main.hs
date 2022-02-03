@@ -181,7 +181,7 @@ handleEvent (CTreasure (Item lore buff value) str) = do liftIO $ putStrLn str
                                                                                     let newHp = hp+value
                                                                                     liftIO $ putStrLn $ replaceStr '*' (show value) hpPrompt
                                                                                     liftIO $ putStrLn $ replaceStr '*' (show $ max 0 newHp) hpCurrent
-                                                                                    if newHp < 1 then gameLoop False else updatePlayer (Player newHp dmg pos)
+                                                                                    if newHp < 1 then getMenuOpt Death >>= (liftIO . putStrLn) >> gameLoop False else updatePlayer (Player newHp dmg pos)
                                                                         updateCell pos CEmpty
                                                                 else do pos <- getPos
                                                                         updateCell pos CEmpty
