@@ -1,7 +1,6 @@
 module Main where
 
 import Parser
-import Lib
 import AST
 import System.Environment (getArgs)
 import GameBuilder
@@ -31,9 +30,9 @@ main = do args <- getArgs
           let filename = head args
           if isSuffixOf ".txs" filename
             then do contents <- readFile filename
-                    let [opt] = tail args
+                    let [opt] = let arg = tail args in if arg == [] then [""] else arg
                     let casoCoordenadas = takeWhile (/= '\n') contents -- Saco la linea que tiene el tamaño del mapa
-                    let limits = parseMap casoCoordenadas              -- Obtengo el tamaño del mapa de una forma poco elegante
+                    let limits = parseMap casoCoordenadas              -- Obtengo el tamaño del mapa 
                     let parseado = parse $ lexer contents
                     case parseado of
                       Ok parsedFile -> do let evaluado = eval limits parsedFile
@@ -199,7 +198,7 @@ handleEvent CExit = getMenuOpt Exit >>=  (liftIO . putStrLn) >> gameLoop False
 handleEvent (CMapSize _ _) = do liftIO $ putStrLn "No deberias estar aqui"
 handleEvent CNewLine =  do liftIO $ putStrLn "No deberias estar aqui"
 handleEvent CClosed =  do liftIO $ putStrLn "No deberias estar aqui"
-handleEvent _ = undefined -- pa calmar al linter
+handleEvent _ = undefined -- para calmar al linter
 
 gameLoop :: Bool -> GameState ()
 gameLoop True = do (v,m,p,c) <- get

@@ -42,13 +42,4 @@ executables:
     dependencies:
     - textskell
 
-tests:
-  textskell-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - textskell
+
